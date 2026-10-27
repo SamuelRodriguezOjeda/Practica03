@@ -1,57 +1,95 @@
+
 package vista;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
-/**
- * VISTA: ventana que muestra un cliente cada vez.
- * Solo dibuja y expone métodos. No tiene lógica ni conoce la clase Cliente.
- */
 public class VistaClientes extends JFrame {
-    private final JLabel lblPosicion = new JLabel("", SwingConstants.CENTER);
-    private final JLabel lblNombre = new JLabel();
-    private final JLabel lblEdad = new JLabel();
-    private final JButton btnAnterior = new JButton("< Anterior");
-    private final JButton btnSiguiente = new JButton("Siguiente >");
+
+    private CardLayout tarjetas;
+    private JPanel panelPrincipal;
+
+    private PanelVisualizar panelVisualizar;
+    private PanelNuevo panelNuevo;
+
+    private JMenuItem itemVisualizar;
+    private JMenuItem itemNuevo;
+    private JMenuItem itemSalir;
 
     public VistaClientes() {
-        super("Clientes");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new BorderLayout(10, 10));
-        ((JComponent) getContentPane()).setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        super("Gestión de clientes");
 
-        JPanel datos = new JPanel(new GridLayout(2, 2, 8, 8));
-        datos.add(new JLabel("Nombre:"));
-        datos.add(lblNombre);
-        datos.add(new JLabel("Edad:"));
-        datos.add(lblEdad);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
 
-        JPanel botones = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        botones.add(btnAnterior);
-        botones.add(btnSiguiente);
+        // Crear los paneles
+        tarjetas = new CardLayout();
+        panelPrincipal = new JPanel(tarjetas);
 
-        add(lblPosicion, BorderLayout.NORTH);
-        add(datos, BorderLayout.CENTER);
-        add(botones, BorderLayout.SOUTH);
+        panelVisualizar = new PanelVisualizar();
+        panelNuevo = new PanelNuevo();
 
-        setSize(380, 220);
+        panelPrincipal.add(panelVisualizar, "visualizar");
+        panelPrincipal.add(panelNuevo, "nuevo");
+
+        add(panelPrincipal, BorderLayout.CENTER);
+
+        // Crear el menú
+        JMenuBar barraMenu = new JMenuBar();
+        JMenu menu = new JMenu("Clientes");
+
+        itemVisualizar = new JMenuItem("Visualizar");
+        itemNuevo = new JMenuItem("Nuevo");
+        itemSalir = new JMenuItem("Salir");
+
+        menu.add(itemVisualizar);
+        menu.add(itemNuevo);
+        menu.addSeparator();
+        menu.add(itemSalir);
+
+        barraMenu.add(menu);
+        setJMenuBar(barraMenu);
+
+        // Tamaño fijo de la ventana
+        setPreferredSize(new Dimension(735, 440));
+        pack();
+
         setLocationRelativeTo(null);
     }
 
-    public void mostrarCliente(String nombre, String edad, int posicion, int total) {
-        lblPosicion.setText("Cliente " + posicion + " de " + total);
-        lblNombre.setText(nombre);
-        lblEdad.setText(edad);
+    public void mostrarPanelVisualizar() {
+        tarjetas.show(panelPrincipal, "visualizar");
     }
 
-    /** El controlador decide qué botones tienen sentido; la vista solo obedece. */
-    public void setNavegacion(boolean puedeRetroceder, boolean puedeAvanzar) {
-        btnAnterior.setEnabled(puedeRetroceder);
-        btnSiguiente.setEnabled(puedeAvanzar);
+    public void mostrarPanelNuevo() {
+        tarjetas.show(panelPrincipal, "nuevo");
     }
 
-    // La vista solo avisa de que "se pulsó algo"
-    public void addAnteriorListener(ActionListener l) { btnAnterior.addActionListener(l); }
-    public void addSiguienteListener(ActionListener l) { btnSiguiente.addActionListener(l); }
+    public PanelVisualizar getPanelVisualizar() {
+        return panelVisualizar;
+    }
+
+    public PanelNuevo getPanelNuevo() {
+        return panelNuevo;
+    }
+
+    // Eventos del menú
+    public void addVisualizarListener(ActionListener l) {
+        itemVisualizar.addActionListener(l);
+    }
+
+    public void addNuevoListener(ActionListener l) {
+        itemNuevo.addActionListener(l);
+    }
+
+    public void addSalirListener(ActionListener l) {
+        itemSalir.addActionListener(l);
+    }
 }
